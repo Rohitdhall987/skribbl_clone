@@ -1,5 +1,6 @@
 import "./App.css"
 import GameCanvas from "./components/game_canvas"
+import Home from "./pages/home"
 
 function App() {
 
@@ -7,8 +8,7 @@ function App() {
 
   return (
     <>
-      <h1> Skribbl Clone</h1>
-      <GameCanvas />
+      <Home />
     </>
   )
 }

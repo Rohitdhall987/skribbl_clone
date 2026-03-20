@@ -1,5 +1,35 @@
 @import "tailwindcss";
 
-input {
-  @apply p-2 border rounded-full;
+
+:root {
+  --root-bg: #dad4c8;
+  --primary-bg: #BB0054;
+  --secondary-bg: #e8e2d7;
+  --border-color: #c6bcab;
+  --primary-color: #FF4081;
+  --secondary-color: #9C27B0;
+  --tertiary-color: #FFEB3B;
+  --netural-color: #FFF9F0;
+  --headLine-color: #312e29;
+  --body-color: #5e5b54;
+}
+
+body {
+  @apply bg-(--root-bg);
+}
+
+.common_input {
+  @apply bg-(--secondary-bg) p-2 rounded-xl outline-none border-2 border-(--border-color);
+}
+
+.content_conatiner {
+  @apply bg-(--netural-color) p-3 rounded-3xl border-6 border-(--border-color);
+}
+
+.btn_primary {
+  @apply bg-(--primary-bg) text-center text-white rounded-xl p-2 transition-all hover:scale-105 duration-300 ease-in-out;
+}
+
+.btn_secondary {
+  @apply bg-(--secondary-color) text-center text-white rounded-xl p-2 transition-all hover:scale-105 duration-300 ease-in-out;
 }

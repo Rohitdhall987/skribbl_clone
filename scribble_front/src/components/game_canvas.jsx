@@ -108,7 +108,10 @@ function GameCanvas() {
 
   const clearCanvas = (_) => {
     const ctx = ctxRef.current;
-    ctx.reset();
+    ctx.fillStyle = "white";
+    const w = ctx.canvas.width;
+    const h = ctx.canvas.height;
+    ctx.fillRect(0, 0, w, h);
     ctx.lineWidth = strokeWidth;
   };
 

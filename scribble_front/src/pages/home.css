@@ -1,0 +1,22 @@
+@import "tailwindcss";
+
+
+.title {
+  @apply text-center text-(--primary-color) text-4xl md:text-6xl lg:text-8xl font-black py-6 italic;
+}
+
+.panel {
+  @apply w-3/4 md:w-2/5 lg:w-1/5 flex m-2 flex-col mx-auto gap-3 text-xl justify-center items-center;
+}
+
+.panel input {
+  @apply w-full;
+}
+
+.temp_avatar {
+  @apply bg-gray-500 rounded-full w-24 h-24 border-4 border-(--primary-color);
+}
+
+.item_row {
+  @apply w-full flex justify-between;
+}
