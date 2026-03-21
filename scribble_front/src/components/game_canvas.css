@@ -2,11 +2,11 @@
 
 
 .canvas_container {
-  @apply w-1/2 mx-auto;
+  @apply w-full mx-auto;
 }
 
 .drawing_area {
-  @apply aspect-video w-full border;
+  @apply aspect-video w-full rounded-2xl ring-8 ring-(--border-color) shadow-xl/20;
 }
 
 .active {

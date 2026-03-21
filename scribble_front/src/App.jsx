@@ -1,6 +1,8 @@
+import { Route, Routes } from "react-router-dom"
 import "./App.css"
 import GameCanvas from "./components/game_canvas"
 import Home from "./pages/home"
+import GameRoom from "./pages/gameRoom"
 
 function App() {
 
@@ -8,7 +10,10 @@ function App() {
 
   return (
     <>
-      <Home />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/game" element={<GameRoom />} />
+      </Routes>
     </>
   )
 }

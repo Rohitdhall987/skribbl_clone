@@ -2,17 +2,18 @@
 
 
 :root {
-  --root-bg: #dad4c8;
+  --root-bg: #f6f0e7;
   --primary-bg: #BB0054;
   --secondary-bg: #e8e2d7;
-  --border-color: #c6bcab;
-  --primary-color: #FF4081;
+  --border-color: #ede7dd;
+  --primary-color: #BB0054;
   --secondary-color: #9C27B0;
   --tertiary-color: #FFEB3B;
   --netural-color: #FFF9F0;
   --headLine-color: #312e29;
   --body-color: #5e5b54;
 }
+
 
 body {
   @apply bg-(--root-bg);
@@ -23,7 +24,7 @@ body {
 }
 
 .content_conatiner {
-  @apply bg-(--netural-color) p-3 rounded-3xl border-6 border-(--border-color);
+  @apply bg-(--netural-color) p-3 rounded-3xl border-6 border-(--border-color) shadow-xl/20;
 }
 
 .btn_primary {

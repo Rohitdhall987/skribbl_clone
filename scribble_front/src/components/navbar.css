@@ -1,0 +1,30 @@
+@import "tailwindcss";
+
+
+.nav_root {
+  @apply bg-(--netural-color) py-2 md:py-3 lg:py-5 px-4 md:px-8 lg:px-12 rounded-b-4xl md:rounded-b-[3rem] shadow-xl/10 flex justify-between items-center;
+}
+
+.nav_title {
+  @apply hidden md:block text-(--primary-color) font-black text-3xl italic;
+}
+
+.round_details {
+  @apply flex items-center gap-4;
+}
+
+.clock {
+  @apply flex items-center gap-2 bg-(--tertiary-color) py-2 px-4 font-bold rounded-full;
+}
+
+.round {
+  @apply bg-(--secondary-color)/50 py-2 px-4 font-bold rounded-full;
+}
+
+.nav_icons {
+  @apply bg-(--secondary-bg) p-2 rounded-full;
+}
+
+.nav_icons svg {
+  @apply text-3xl text-(--primary-color);
+}

@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+.layout {
+  @apply w-full grid grid-cols-6;
+}
+
+.leader_board {
+  @apply col-span-1;
+}
+
+.game_area {
+  @apply col-span-4;
+}
+
+.chat {
+  @apply col-span-1;
+}
