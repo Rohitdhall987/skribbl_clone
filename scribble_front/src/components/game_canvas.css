@@ -12,3 +12,11 @@
 .active {
   @apply bg-gray-700 text-white;
 }
+
+.color {
+  @apply w-6 h-6 rounded-full m-1 col-span-2;
+}
+
+.active_color {
+  @apply ring-4;
+}

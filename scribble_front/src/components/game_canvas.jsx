@@ -1,14 +1,30 @@
+import { IoBrush } from "react-icons/io5";
 import "./game_canvas.css"
 import { useRef, useState, useEffect } from "react"
+import { FaFillDrip, FaRegTrashCan } from "react-icons/fa6";
 
 function GameCanvas() {
 
 
   const colorRef = useRef("#FF0000");
   const toolRef = useRef(0);
-  const [color, setColorState] = useState("#FF0000");
   const [strokeWidth, setStrokeWidth] = useState(5);
+  const [activeColor, setActiveColor] = useState("#FF0000");
   const [tool, setToolState] = useState(0);
+
+  const quickColors = [
+    "#FF0000", // red
+    "#00FF00", // green
+    "#0000FF", // blue
+    "#FFFF00", // yellow
+    "#FF00FF", // magenta
+    "#00FFFF", // cyan
+    "#000000", // black
+    "#FFFFFF", // white
+    "#FFA500", // orange
+    "#800080"  // purple
+  ];
+
 
   const canvasRef = useRef(null);
   const ctxRef = useRef(null);
@@ -53,9 +69,9 @@ function GameCanvas() {
     ctxRef.current.lineWidth = value;
   }
 
-  const upddateColor = (e) => {
-    setColorState(e.target.value);
-    colorRef.current = e.target.value;
+  const upddateColor = (color) => {
+    setActiveColor(color);
+    colorRef.current = color;
   };
 
   const handleMouseDown = (e) => {
@@ -182,12 +198,32 @@ function GameCanvas() {
     <>
       <div className="canvas_container">
         <canvas className="drawing_area" ref={canvasRef}></canvas>
-        <input type="range" max="19" min="1" step="1" value={strokeWidth} onChange={updateStroke} />
-        <input type="button" className={tool == 0 ? "active" : ""} value="Brush" onClick={(_) => updateTool(0)} />
-        <input type="button" className={tool == 1 ? "active" : ""} value="Fill" onClick={(_) => updateTool(1)} />
-        <input type="color" value={color} onChange={upddateColor} />
-        <input type="button" onClick={clearCanvas} value="Clear All" />
-      </div>
+        <div className="flex mt-4 gap-4 justify-end items-center">
+          <div className=" grid grid-cols-10">
+            {
+              quickColors.map((color, i) => (
+                <button key={i} className={"color " + (color == activeColor ? "active_color" : "")} style={{ "backgroundColor": color }} onClick={(_) => upddateColor(color)}></button>
+              ))
+            }
+          </div>
+
+
+          <div className="flex gap-4">
+            <input type="range" max="19" min="1" step="1" value={strokeWidth} onChange={updateStroke} />
+            <button className={tool == 0 ? "btn_secondary" : ""} onClick={(_) => updateTool(0)} >
+              <IoBrush />
+            </button>
+            <button className={tool == 1 ? "btn_secondary" : ""} onClick={(_) => updateTool(1)} >
+              <FaFillDrip />
+            </button>
+
+            <button onClick={clearCanvas} className="btn_primary">
+              <FaRegTrashCan />
+            </button>
+          </div>
+
+        </div>
+      </div >
     </>
   )
 }

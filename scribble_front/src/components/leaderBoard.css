@@ -1,0 +1,9 @@
+@import "tailwindcss";
+
+.player_card {
+  @apply p-2 my-2;
+}
+
+.drawing {
+  @apply bg-(--secondary-color) rounded-2xl text-white;
+}
