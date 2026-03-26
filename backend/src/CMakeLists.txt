@@ -7,7 +7,10 @@ cmake_policy(SET CMP0167 NEW)
 
 find_package(Boost 1.89 REQUIRED)
 
-add_executable(skribbl_server main.cpp)
+add_executable(skribbl_server
+main.cpp
+server.cpp
+)
 
 target_include_directories(skribbl_server PRIVATE ${Boost_INCLUDE_DIRS})
 target_compile_definitions(skribbl_server PRIVATE BOOST_ASIO_NO_DEPRECATED)
