@@ -17,7 +17,6 @@ class Server {
   ip::tcp::acceptor acceptor_;
 
   void start_connection();
-  void handle_request(ip::tcp::socket &&socket);
 
 public:
   Server(asio::io_context &context, size_t &port, size_t &backlog);

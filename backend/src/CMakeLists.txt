@@ -10,6 +10,7 @@ find_package(Boost 1.89 REQUIRED)
 add_executable(skribbl_server
 main.cpp
 server.cpp
+connection.cpp
 )
 
 target_include_directories(skribbl_server PRIVATE ${Boost_INCLUDE_DIRS})
