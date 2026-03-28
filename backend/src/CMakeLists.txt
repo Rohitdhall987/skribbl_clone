@@ -11,6 +11,7 @@ add_executable(skribbl_server
 main.cpp
 server.cpp
 connection.cpp
+router.cpp
 )
 
 target_include_directories(skribbl_server PRIVATE ${Boost_INCLUDE_DIRS})

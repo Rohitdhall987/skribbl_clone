@@ -14,8 +14,12 @@ Connection::Connection(boost::asio::io_context &context) : socket(context) {}
 Connection::~Connection() { std::cout << "Objects is distroyed" << std::endl; }
 
 void Connection::handle_connection(const std::error_code &ec) {
-  std::cout << "i will handle this connection" << std::endl;
 
+  if (ec) {
+    std::cout << "Error while handle_connection : " << ec.message()
+              << std::endl;
+    return;
+  }
   auto self = shared_from_this();
 
   asio::async_read_until(
