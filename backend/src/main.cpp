@@ -1,4 +1,3 @@
-#include "include/router.hpp"
 #include "include/server.hpp"
 #include <boost/asio/buffer.hpp>
 #include <boost/asio/detached.hpp>
@@ -16,19 +15,7 @@ int main() {
 
   boost::asio::io_context ctx;
 
-  Router router;
-
-  router.add(Route{POST, "/data",
-                   [](Request &req, boost::asio::ip::tcp::socket &socket) {
-                     std::string response = "HTTP/1.1 200 OK\r\n"
-                                            "Content-Type: text/plain\r\n\r\n"
-                                            "Received: " +
-                                            req.body;
-
-                     boost::asio::write(socket, boost::asio::buffer(response));
-                   }});
-
-  Server server(ctx, port, backlog, router);
+  Server server(ctx, port, backlog);
 
   server.start();
 

@@ -1,29 +1,30 @@
 #pragma once
 #include <boost/asio.hpp>
+#include <boost/beast.hpp>
+#include <boost/beast/http/message_fwd.hpp>
+#include <boost/beast/http/string_body_fwd.hpp>
+#include <boost/beast/http/verb.hpp>
 #include <string>
 #include <vector>
 
-enum HttpMethod { GET, POST, PUT, PATCH, DELETE };
-
-struct Request {
-  std::string method;
-  std::string path;
-  std::string version;
-
-  std::unordered_map<std::string, std::string> headers;
-  std::string body;
-};
+namespace {
+namespace http = boost::beast::http;
+namespace ip = boost::asio::ip;
+} // namespace
 
 struct Route {
-  HttpMethod type;
+  http::verb type;
   std::string route_name;
-  std::function<void(Request &, boost::asio::ip::tcp::socket &)> handler;
+  std::function<void(http::request<http::string_body> &, ip::tcp::socket &)>
+      handler;
 };
 
 class Router {
   std::vector<Route> routes;
 
-public:
   void add(const Route &r);
+
+public:
+  Router();
   const std::vector<Route> &getRoutes() const;
 };

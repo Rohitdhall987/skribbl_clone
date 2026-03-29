@@ -16,13 +16,12 @@ class Server {
   size_t backlog_;
   asio::io_context &context_;
   ip::tcp::acceptor acceptor_;
-  Router router_;
+  Router *router;
 
   void accept_connection();
 
 public:
-  Server(asio::io_context &context, size_t &port, size_t &backlog,
-         Router &router);
+  Server(asio::io_context &context, size_t &port, size_t &backlog);
 
   void start();
 };
