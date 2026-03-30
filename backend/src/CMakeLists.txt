@@ -5,16 +5,18 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 cmake_policy(SET CMP0167 NEW)
 
-find_package(Boost 1.89 REQUIRED)
+find_package(Boost 1.89 REQUIRED COMPONENTS json)
 
 add_executable(skribbl_server
 main.cpp
 server.cpp
 connection.cpp
 router.cpp
+utils/json.cpp
+utils/responses.cpp
 )
 
 target_include_directories(skribbl_server PRIVATE ${Boost_INCLUDE_DIRS})
 target_compile_definitions(skribbl_server PRIVATE BOOST_ASIO_NO_DEPRECATED)
-target_link_libraries(skribbl_server PRIVATE pthread)
+target_link_libraries(skribbl_server PRIVATE pthread Boost::json)
 
