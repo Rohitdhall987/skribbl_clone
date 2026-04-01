@@ -12,8 +12,10 @@ main.cpp
 server.cpp
 connection.cpp
 router.cpp
+room.cpp
 utils/json.cpp
 utils/responses.cpp
+utils/query.cpp
 )
 
 target_include_directories(skribbl_server PRIVATE ${Boost_INCLUDE_DIRS})
