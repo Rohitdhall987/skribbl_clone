@@ -28,6 +28,12 @@ std::mutex room_mutex;
 } // namespace
 
 Router::Router() {
+  add(Route{http::verb::options, "/",
+            [](http::request<http::string_body> &req, ip::tcp::socket &socket) {
+              Response r;
+              r.status = "204 No Content";
+              r.send(socket);
+            }});
   add(Route{http::verb::get, "/",
             [](http::request<http::string_body> &req, ip::tcp::socket &socket) {
               Response r;

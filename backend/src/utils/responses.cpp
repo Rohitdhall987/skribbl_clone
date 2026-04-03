@@ -7,10 +7,15 @@ namespace {
 namespace ip = boost::asio::ip;
 }
 void Response::send(ip::tcp::socket &soc) {
-  std::string response = version + " " + status +
-                         "\r\n"
-                         "Content-Type: " +
-                         content_type + "\r\n\r\n" + content;
+  std::string response =
+      version + " " + status +
+      "\r\n"
+      "Content-Type: " +
+      content_type + "\r\n" +
+      "Access-Control-Allow-Origin: *\r\n"
+      "Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS\r\n"
+      "Access-Control-Allow-Headers: Content-Type, Authorization" +
+      "\r\n\r\n" + content;
   boost::asio::write(soc, boost::asio::buffer(response));
   soc.close();
 }

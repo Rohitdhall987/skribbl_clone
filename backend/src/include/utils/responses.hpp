@@ -13,7 +13,7 @@ public:
   std::string status = "200 Ok";
   std::string content_type = "text/plain";
   std::string content = "";
-
+  std::string extra_headers = "";
   void send(ip::tcp::socket &soc);
   void err(ip::tcp::socket &soc, std::string msg);
 };
