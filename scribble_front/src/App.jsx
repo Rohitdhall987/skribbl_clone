@@ -6,18 +6,17 @@ import { useEffect } from "react"
 
 function App() {
 
-  //TODO: generate a user id
   useEffect(() => {
-    getdata();
+    generateId();
   }, []);
 
-  async function getdata() {
-    const res = await fetch("http://localhost:8000/");
-
-    if (res.ok) {
-      console.log(await res.text());
+  function generateId() {
+    var id;
+    id = localStorage.getItem("id");
+    if (!id) {
+      id = crypto.randomUUID();
+      localStorage.setItem("id", id);
     }
-
   }
 
   return (
