@@ -1,8 +1,9 @@
 import { useState } from "react";
 import "./home.css";
+import { useNavigate } from "react-router-dom";
 
 function Home() {
-
+  const navigate = useNavigate();
 
   const [formType, setFormTypeState] = useState("join");
   const [show, setShowState] = useState(false);
@@ -60,6 +61,17 @@ function Home() {
     }
   };
 
+  const joinRoom = (e) => {
+    e.preventDefault();
+    const link = formData.room_link;
+    const pass = formData.room_key;
+
+
+
+    navigate(`/game?link=${link}&pass=${pass}`);
+
+  }
+
   return (
     <div className="relative">
       {
@@ -69,11 +81,33 @@ function Home() {
 
             {
               formType == "join" ?
-                <>
-                  <input className="common_input" type="text" placeholder="Room Link" onChange={handleChange} />
-                  <input className="common_input" type="text" placeholder="Room Key" onChange={handleChange} />
-                  <input className="btn_primary" type="button" value="Join" />
-                </>
+
+                <form className="flex flex-col w-full gap-3" onSubmit={joinRoom}>
+                  <input
+                    id="room_link"
+                    className="common_input"
+                    type="text"
+                    placeholder="Room Link"
+                    required
+                    onChange={handleChange}
+                  />
+
+                  <input
+                    id="room_key"
+                    className="common_input"
+                    type="text"
+                    placeholder="Room Key"
+                    required
+                    onChange={handleChange}
+                  />
+
+                  <input
+                    className="btn_primary"
+                    type="submit"
+                    value="Join"
+                  />
+                </form>
+
                 :
                 formType == "create" ?
                   <>

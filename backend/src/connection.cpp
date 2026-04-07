@@ -26,10 +26,15 @@ void Connection::handle_connection(const std::error_code &ec, Router *router) {
       socket, readBuff, request,
       [this, self, router](const boost::system::error_code &ec,
                            std::size_t bytes_transferred) {
+        std::string target = std::string(request.target());
+
+        auto pos = target.find('?');
+        std::string path =
+            (pos == std::string::npos) ? target : target.substr(0, pos);
+
         bool found = false;
         for (auto r : router->getRoutes()) {
-          if (r.type == request.method() &&
-              !request.target().compare(r.route_name.c_str())) {
+          if (r.type == request.method() && path == r.route_name) {
             r.handler(request, socket);
             found = true;
             break;

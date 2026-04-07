@@ -1,12 +1,20 @@
 import "./gameRoom.css";
 import GameCanvas from "../components/game_canvas";
 import Navbar from "../components/navbar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import LeaderBoard from "../components/leaderBoard";
 import ChatBox from "../components/charBox";
+import { useSearchParams } from "react-router-dom";
 
 
 function GameRoom() {
+
+
+  const [searchParams] = useSearchParams();
+
+  const link = searchParams.get("link");
+  const pass = searchParams.get("pass");
+
 
   const [word, setWord] = useState("SNAKE");
   const [reveal, setRevel] = useState([1, 3]);
@@ -31,6 +39,30 @@ function GameRoom() {
       "isDrawing": false,
     }
   ];
+
+  useEffect(() => {
+    if (!link || !pass) return;
+
+    const ws = new WebSocket(
+      `ws://localhost:8000/join?link=${link}&pass=${pass}`
+    );
+
+    ws
+
+    ws.onopen = () => {
+      console.log("Connected");
+    };
+
+    ws.onmessage = (msg) => {
+      console.log(msg.data);
+    };
+
+    ws.onclose = () => {
+      console.log("Disconnected");
+    };
+
+    return () => ws.close();
+  }, [link, pass]);
 
   return (
     <div className="h-screen overflow-hidden flex flex-col">

@@ -21,11 +21,15 @@ void Response::send(ip::tcp::socket &soc) {
 }
 void Response::err(ip::tcp::socket &soc, std::string msg) {
 
-  std::string res = "HTTP/1.1 400 Bad Request\r\n"
-                    "Content-Type: application/json\r\n\r\n"
-                    "{"
-                    "\"message\": \"" +
-                    msg + "\"}";
+  std::string res =
+      "HTTP/1.1 400 Bad Request\r\n"
+      "Content-Type: application/json\r\n"
+      "Access-Control-Allow-Origin: *\r\n"
+      "Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS\r\n"
+      "Access-Control-Allow-Headers: Content-Type, Authorization\r\n\r\n"
+      "{"
+      "\"message\": \"" +
+      msg + "\"}";
   boost::asio::write(soc, boost::asio::buffer(res));
   soc.close();
 }

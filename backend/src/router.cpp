@@ -14,6 +14,7 @@
 #include <boost/json/string.hpp>
 #include <boost/json/value.hpp>
 #include <boost/system/detail/error_code.hpp>
+#include <iostream>
 #include <string>
 #include <vector>
 
@@ -53,13 +54,17 @@ Router::Router() {
               auto jv = json::parse(req.body());
               auto &body = jv.as_object();
 
-              player creator{body.at("id").as_uint64(),
-                             std::string(body.at("name").as_string())};
+              player creator{
+                  (unsigned long)std::stoi(body.at("id").as_string().c_str()),
+                  std::string(body.at("name").as_string())};
 
-              size_t players = body.at("players").as_uint64();
-              size_t duration = body.at("duration").as_uint64();
-              size_t rounds = body.at("rounds").as_uint64();
-              size_t hints = body.at("hints").as_uint64();
+              size_t players =
+                  std::stoi(body.at("players").as_string().c_str());
+              size_t duration =
+                  std::stoi(body.at("duration").as_string().c_str());
+
+              size_t rounds = std::stoi(body.at("rounds").as_string().c_str());
+              size_t hints = std::stoi(body.at("hints").as_string().c_str());
 
               std::string link = std::to_string(rand() % 100000);
               std::string password = "1234"; // TODO:: replace later
@@ -81,46 +86,87 @@ Router::Router() {
 
   add(Route{http::verb::get, "/join",
             [](http::request<http::string_body> &req, ip::tcp::socket &socket) {
+              std::cout << "---- NEW REQUEST ----\n";
+              std::cout << "Target: " << req.target() << "\n";
+
               auto params = parse_query(std::string(req.target()));
 
-              std::string link = params["room"];
-              std::string password = params["password"];
+              std::cout << "Parsed params:\n";
+              for (auto &p : params) {
+                std::cout << p.first << " = " << p.second << "\n";
+              }
+
+              std::string link = params["link"];
+              std::string password = params["pass"];
+
+              std::cout << "Link: " << link << "\n";
+              std::cout << "Password: " << password << "\n";
 
               std::shared_ptr<Room> room;
 
               {
                 std::lock_guard<std::mutex> lock(room_mutex);
 
+                std::cout << "Checking room existence...\n";
+
                 if (rooms.find(link) == rooms.end()) {
+                  std::cout << "❌ Room not found\n";
                   Response().err(socket, "room not found");
                   return;
                 }
 
+                std::cout << "✅ Room found\n";
+
                 room = rooms[link];
 
+                std::cout << "Verifying password...\n";
+
                 if (!room->verify(link, password)) {
+                  std::cout << "❌ Wrong password\n";
                   Response().err(socket, "wrong password");
                   return;
                 }
+
+                std::cout << "✅ Password correct\n";
               }
+
+              std::cout << "Creating WebSocket...\n";
 
               auto ws = std::make_shared<websocket::stream<ip::tcp::socket>>(
                   std::move(socket));
 
+              std::cout << "Accepting WebSocket handshake...\n";
+
               ws->accept(req);
+
+              std::cout << "✅ WebSocket connected!\n";
 
               room->add_session(ws);
 
-              for (;;) {
-                boost::beast::flat_buffer buffer;
-                ws->read(buffer);
+              std::cout << "Session added. Total sessions: "
+                        << room->sessions.size() << "\n";
 
-                std::string msg =
-                    boost::beast::buffers_to_string(buffer.data());
+              try {
+                for (;;) {
+                  boost::beast::flat_buffer buffer;
 
-                for (auto &session : room->sessions) {
-                  session->write(boost::asio::buffer(msg));
+                  std::cout << "Waiting for message...\n";
+
+                  ws->read(buffer);
+
+                  std::string msg =
+                      boost::beast::buffers_to_string(buffer.data());
+
+                  std::cout << "Received: " << msg << "\n";
+
+                  for (auto &session : room->sessions) {
+                    session->write(boost::asio::buffer(msg));
+                  }
                 }
+              } catch (const boost::system::system_error &e) {
+                std::cout << "❌ Connection closed: " << e.what() << "\n";
+              } catch (const std::exception &e) {
+                std::cout << "❌ Error: " << e.what() << "\n";
               }
             }});
 }
