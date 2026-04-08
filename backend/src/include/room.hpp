@@ -6,11 +6,7 @@
 #include <string>
 #include <vector>
 
-namespace {
-namespace websocket = boost::beast::websocket;
-namespace ip = boost::asio::ip;
-} // namespace
-
+class Session;
 typedef struct {
   size_t id;
   std::string name;
@@ -32,13 +28,16 @@ class Room {
   player creator_;
 
 public:
-  std::vector<std::shared_ptr<websocket::stream<ip::tcp::socket>>> sessions;
+  std::vector<std::shared_ptr<Session>> sessions;
+
   Room(size_t player_count, size_t hints, size_t rounds, size_t duration,
        player creator, std::string link, std::string pass);
 
   void add_player(player p);
 
-  void add_session(std::shared_ptr<websocket::stream<ip::tcp::socket>> ws);
+  void add_session(std::shared_ptr<Session> s);
 
   bool verify(std::string link, std::string pass);
+
+  void remove_session(std::shared_ptr<Session> s);
 };

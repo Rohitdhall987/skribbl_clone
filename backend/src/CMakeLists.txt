@@ -13,6 +13,7 @@ server.cpp
 connection.cpp
 router.cpp
 room.cpp
+session.cpp
 utils/json.cpp
 utils/responses.cpp
 utils/query.cpp

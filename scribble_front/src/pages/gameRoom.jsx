@@ -4,20 +4,24 @@ import Navbar from "../components/navbar";
 import { useEffect, useState } from "react";
 import LeaderBoard from "../components/leaderBoard";
 import ChatBox from "../components/charBox";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 
 function GameRoom() {
 
-
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
   const link = searchParams.get("link");
   const pass = searchParams.get("pass");
+  const uid = localStorage.getItem("id");
+  const uname = localStorage.getItem("username");
 
 
   const [word, setWord] = useState("SNAKE");
   const [reveal, setRevel] = useState([1, 3]);
+  const [score, setScore] = useState(0);
+  const [isDrawing, setIsDrawing] = useState(false);
 
   const playersData = [
     {
@@ -51,14 +55,26 @@ function GameRoom() {
 
     ws.onopen = () => {
       console.log("Connected");
+      ws.send(JSON.stringify({
+        type: "player",
+        data: {
+          id: uid,
+          name: uname,
+          score: score,
+          isDrawing: isDrawing
+        }
+      }));
     };
+
+
 
     ws.onmessage = (msg) => {
       console.log(msg.data);
     };
 
     ws.onclose = () => {
-      console.log("Disconnected");
+      alert("Room no longer exist");
+      navigate("/");
     };
 
     return () => ws.close();

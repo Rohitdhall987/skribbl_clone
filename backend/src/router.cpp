@@ -1,5 +1,6 @@
 #include "include/router.hpp"
 #include "include/room.hpp"
+#include "include/session.hpp"
 #include "include/utils/json.hpp"
 #include "include/utils/query.hpp"
 #include "include/utils/responses.hpp"
@@ -15,6 +16,7 @@
 #include <boost/json/value.hpp>
 #include <boost/system/detail/error_code.hpp>
 #include <iostream>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -91,16 +93,8 @@ Router::Router() {
 
               auto params = parse_query(std::string(req.target()));
 
-              std::cout << "Parsed params:\n";
-              for (auto &p : params) {
-                std::cout << p.first << " = " << p.second << "\n";
-              }
-
               std::string link = params["link"];
               std::string password = params["pass"];
-
-              std::cout << "Link: " << link << "\n";
-              std::cout << "Password: " << password << "\n";
 
               std::shared_ptr<Room> room;
 
@@ -115,8 +109,6 @@ Router::Router() {
                   return;
                 }
 
-                std::cout << "✅ Room found\n";
-
                 room = rooms[link];
 
                 std::cout << "Verifying password...\n";
@@ -127,47 +119,16 @@ Router::Router() {
                   return;
                 }
 
-                std::cout << "✅ Password correct\n";
+                std::cout << "✅ Room validated\n";
               }
 
-              std::cout << "Creating WebSocket...\n";
+              std::cout << "Creating Session...\n";
 
-              auto ws = std::make_shared<websocket::stream<ip::tcp::socket>>(
-                  std::move(socket));
+              auto session = std::make_shared<Session>(std::move(socket), room);
 
-              std::cout << "Accepting WebSocket handshake...\n";
+              session->start(req);
 
-              ws->accept(req);
-
-              std::cout << "✅ WebSocket connected!\n";
-
-              room->add_session(ws);
-
-              std::cout << "Session added. Total sessions: "
-                        << room->sessions.size() << "\n";
-
-              try {
-                for (;;) {
-                  boost::beast::flat_buffer buffer;
-
-                  std::cout << "Waiting for message...\n";
-
-                  ws->read(buffer);
-
-                  std::string msg =
-                      boost::beast::buffers_to_string(buffer.data());
-
-                  std::cout << "Received: " << msg << "\n";
-
-                  for (auto &session : room->sessions) {
-                    session->write(boost::asio::buffer(msg));
-                  }
-                }
-              } catch (const boost::system::system_error &e) {
-                std::cout << "❌ Connection closed: " << e.what() << "\n";
-              } catch (const std::exception &e) {
-                std::cout << "❌ Error: " << e.what() << "\n";
-              }
+              std::cout << "Session started (async)\n";
             }});
 }
 
