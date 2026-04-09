@@ -23,26 +23,7 @@ function GameRoom() {
   const [score, setScore] = useState(0);
   const [isDrawing, setIsDrawing] = useState(false);
 
-  const playersData = [
-    {
-      "id": 1,
-      "name": "someting",
-      "score": 234,
-      "isDrawing": true,
-    },
-    {
-      "id": 2,
-      "name": "nobodssdsdsfsdfgdgdfgdfgdfgdfgdfsy",
-      "score": 453,
-      "isDrawing": false,
-    },
-    {
-      "id": 3,
-      "name": "somebody",
-      "score": 234,
-      "isDrawing": false,
-    }
-  ];
+  const [playersData, setPlayersData] = useState([]);
 
   useEffect(() => {
     if (!link || !pass) return;
@@ -69,7 +50,12 @@ function GameRoom() {
 
 
     ws.onmessage = (msg) => {
-      console.log(msg.data);
+      const d = JSON.parse(msg.data);
+      console.log(d);
+      if (d["type"] == "player") {
+        setPlayersData([...playersData, d["data"]]);
+      }
+
     };
 
     ws.onclose = () => {
