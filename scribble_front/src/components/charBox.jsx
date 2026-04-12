@@ -3,36 +3,17 @@ import { useState } from "react";
 import { IoSend } from "react-icons/io5";
 
 
-export default function ChatBox() {
-  const [messages, setMessages] = useState([
-    { id: 1, text: "Hey!", sender: "bot" },
-    { id: 2, text: "Hello 👋", sender: "user" },
-  ]);
+export default function ChatBox({ messages, sendMessage }) {
+  const uid = localStorage.getItem("id");
   const [input, setInput] = useState("");
 
-  const sendMessage = () => {
+  const handleSend = () => {
     if (!input.trim()) return;
-
-    const newMessage = {
-      id: Date.now(),
-      text: input,
-      sender: "user",
-    };
-
-    setMessages((prev) => [...prev, newMessage]);
+    sendMessage(input);
     setInput("");
-
-    setTimeout(() => {
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: Date.now() + 1,
-          text: "This is a dummy reply 🤖",
-          sender: "bot",
-        },
-      ]);
-    }, 800);
   };
+
+
 
   return (
 
@@ -45,10 +26,10 @@ export default function ChatBox() {
         {messages.map((msg) => (
           <div
             key={msg.id}
-            className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"}`}
+            className={`flex ${msg.sender == uid ? "justify-end" : "justify-start"}`}
           >
             <div
-              className={`msg_bubble ${msg.sender === "user"
+              className={`msg_bubble ${msg.sender == uid
                 ? "sent"
                 : "recive"
                 }`}
@@ -63,7 +44,7 @@ export default function ChatBox() {
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+          onKeyDown={(e) => e.key === "Enter" && handleSend()}
           placeholder="Type a message..."
           className="chat_in"
         />

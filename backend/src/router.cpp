@@ -56,9 +56,8 @@ Router::Router() {
               auto jv = json::parse(req.body());
               auto &body = jv.as_object();
 
-              player creator{
-                  (unsigned long)std::stoi(body.at("id").as_string().c_str()),
-                  std::string(body.at("name").as_string())};
+              player creator{std::string(body.at("id").as_string()),
+                             std::string(body.at("name").as_string()), 0};
 
               size_t players =
                   std::stoi(body.at("players").as_string().c_str());

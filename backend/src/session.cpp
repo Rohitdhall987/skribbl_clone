@@ -15,6 +15,9 @@ void Session::start(beast::http::request<beast::http::string_body> req) {
     std::cout << "✅ WebSocket connected!\n";
 
     self->room->add_session(self);
+
+    std::string init_data = self->room->get_state_json();
+    self->send(init_data);
     self->read();
   });
 }

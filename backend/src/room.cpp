@@ -1,5 +1,6 @@
 #include "include/room.hpp"
 #include "include/session.hpp"
+#include <boost/json.hpp>
 
 Room::Room(size_t player_count, size_t hints, size_t rounds, size_t duration,
            player creator, std::string link, std::string pass)
@@ -19,4 +20,28 @@ bool Room::verify(std::string link, std::string pass) {
 void Room::remove_session(std::shared_ptr<Session> s) {
   sessions.erase(std::remove(sessions.begin(), sessions.end(), s),
                  sessions.end());
+}
+
+std::string Room::get_state_json() {
+  boost::json::object obj;
+
+  obj["type"] = "init";
+  obj["creator"] = creator_.id;
+  obj["current_round"] = current_round_;
+  obj["total_rounds"] = rounds_;
+  obj["time"] = duration_;
+  boost::json::array players_arr;
+
+  for (const auto &p : players) {
+    boost::json::object p_obj;
+    p_obj["id"] = p.id;
+    p_obj["name"] = p.name;
+    p_obj["score"] = p.score;
+
+    players_arr.push_back(p_obj);
+  }
+
+  obj["players"] = players_arr;
+
+  return boost::json::serialize(obj);
 }

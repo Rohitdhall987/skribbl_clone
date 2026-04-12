@@ -8,8 +8,9 @@
 
 class Session;
 typedef struct {
-  size_t id;
+  std::string id;
   std::string name;
+  size_t score;
 } player;
 
 class Room {
@@ -18,6 +19,7 @@ class Room {
   size_t player_count_;
   size_t hints_;
   size_t rounds_;
+  size_t current_round_ = 0;
   size_t duration_;
 
   std::string room_link;
@@ -40,4 +42,5 @@ public:
   bool verify(std::string link, std::string pass);
 
   void remove_session(std::shared_ptr<Session> s);
+  std::string get_state_json();
 };
