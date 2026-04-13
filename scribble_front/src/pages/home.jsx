@@ -58,6 +58,8 @@ function Home() {
     if (res.ok) {
       const data = await res.json();
       console.log(data);
+
+      navigate(`/game?link=${data.room_link}&pass=${data.password}`);
     }
   };
 

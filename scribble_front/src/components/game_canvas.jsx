@@ -3,7 +3,7 @@ import "./game_canvas.css"
 import { useRef, useState, useEffect } from "react"
 import { FaFillDrip, FaRegTrashCan } from "react-icons/fa6";
 
-function GameCanvas() {
+function GameCanvas({ isDrawing, onDrawEnd }) {
 
 
   const colorRef = useRef("#FF0000");
@@ -96,6 +96,7 @@ function GameCanvas() {
   };
 
   const setUpBrushStart = (ctx, x, y) => {
+    if (!isDrawing) return;
 
     ctx.beginPath();
     ctx.arc(x, y, ctx.lineWidth / 2, 0, Math.PI * 2);
@@ -108,6 +109,7 @@ function GameCanvas() {
   }
 
   const handleMove = (e) => {
+    if (!isDrawing) return;
     if (e.buttons !== 1 || toolRef.current == 1) return;
 
     const x = e.offsetX;
@@ -198,31 +200,34 @@ function GameCanvas() {
     <>
       <div className="canvas_container">
         <canvas className="drawing_area" ref={canvasRef}></canvas>
-        <div className="flex mt-4 gap-4 justify-end items-center">
-          <div className=" grid grid-cols-10">
-            {
-              quickColors.map((color, i) => (
-                <button key={i} className={"color " + (color == activeColor ? "active_color" : "")} style={{ "backgroundColor": color }} onClick={(_) => upddateColor(color)}></button>
-              ))
-            }
+        {
+          isDrawing &&
+          <div className="flex mt-4 gap-4 justify-end items-center">
+            <div className=" grid grid-cols-10">
+              {
+                quickColors.map((color, i) => (
+                  <button key={i} className={"color " + (color == activeColor ? "active_color" : "")} style={{ "backgroundColor": color }} onClick={(_) => upddateColor(color)}></button>
+                ))
+              }
+            </div>
+
+
+            <div className="flex gap-4">
+              <input type="range" max="19" min="1" step="1" value={strokeWidth} onChange={updateStroke} />
+              <button className={tool == 0 ? "btn_secondary" : ""} onClick={(_) => updateTool(0)} >
+                <IoBrush />
+              </button>
+              <button className={tool == 1 ? "btn_secondary" : ""} onClick={(_) => updateTool(1)} >
+                <FaFillDrip />
+              </button>
+
+              <button onClick={clearCanvas} className="btn_primary">
+                <FaRegTrashCan />
+              </button>
+            </div>
+
           </div>
-
-
-          <div className="flex gap-4">
-            <input type="range" max="19" min="1" step="1" value={strokeWidth} onChange={updateStroke} />
-            <button className={tool == 0 ? "btn_secondary" : ""} onClick={(_) => updateTool(0)} >
-              <IoBrush />
-            </button>
-            <button className={tool == 1 ? "btn_secondary" : ""} onClick={(_) => updateTool(1)} >
-              <FaFillDrip />
-            </button>
-
-            <button onClick={clearCanvas} className="btn_primary">
-              <FaRegTrashCan />
-            </button>
-          </div>
-
-        </div>
+        }
       </div >
     </>
   )

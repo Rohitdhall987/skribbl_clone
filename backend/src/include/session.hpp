@@ -3,6 +3,7 @@
 #include <boost/asio.hpp>
 #include <boost/beast.hpp>
 #include <memory>
+#include <queue>
 #include <string>
 
 class Room;
@@ -20,11 +21,18 @@ public:
   void read();
   void send(const std::string &msg);
 
+  std::string get_player_id() const;
+
 private:
   void broadcast(const std::string &msg);
+  void do_write();
 
   websocket::stream<tcp::socket> ws;
   beast::flat_buffer buffer;
   std::shared_ptr<Room> room;
+
+  std::string player_id;
+
+  std::queue<std::string> write_queue;
+  bool writing = false;
 };
-;

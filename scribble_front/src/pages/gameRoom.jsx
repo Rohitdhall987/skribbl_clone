@@ -30,7 +30,8 @@ function GameRoom() {
     creator: "",
     time: 0,
     total_rounds: 0,
-    current_round: 0
+    current_round: 0,
+    started: false
   });
 
   const [playersData, setPlayersData] = useState([]);
@@ -63,7 +64,7 @@ function GameRoom() {
     ws.onmessage = (msg) => {
       const d = JSON.parse(msg.data);
       console.log(d);
-      if (d["type"] == "player") {
+      if (d.type == "player") {
 
 
         setPlayersData((prev) => {
@@ -81,12 +82,19 @@ function GameRoom() {
           creator: d.creator,
           time: d.time,
           total_rounds: d.total_rounds,
-          current_round: d.current_round
+          current_round: d.current_round,
+          started: d.started
         });
 
         setPlayersData(d.players);
       }
 
+      if (d.type === "start") {
+        setRoomData(prev => ({
+          ...prev,
+          started: true,
+        }))
+      }
 
       if (d.type === "chat") {
         setMessages((prev) => [
@@ -118,8 +126,14 @@ function GameRoom() {
         text: text,
       })
     );
+  };
 
-
+  const startGame = (_) => {
+    wsRef.current.send(
+      JSON.stringify({
+        type: "start",
+      })
+    );
   };
 
 
@@ -138,7 +152,16 @@ function GameRoom() {
               </span>))
             }<sup>{word.length}</sup></p>
           </div>
-          <GameCanvas />
+          {
+            roomData.started ?
+              <GameCanvas isDrawing={isDrawing} onDrawEnd={() => { }} /> :
+              uid == roomData.creator ?
+                <div className=" w-full h-full flex justify-center items-center">
+                  <input className="btn_primary text-4xl" type="button" value="Start" onClick={startGame} />
+                </div>
+                :
+                <p>Waiting for the creater to start the game</p>
+          }
         </div>
         <div className="chat content_conatiner">
           <ChatBox messages={messages} sendMessage={sendChat} />
