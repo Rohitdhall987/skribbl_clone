@@ -43,21 +43,21 @@ void Session::read() {
 
           self->player_id = data["id"].as_string().c_str();
 
-          player p;
-          p.id = data["id"].as_string().c_str();
-          p.name = data["name"].as_string().c_str();
-          p.score = data["score"].as_int64();
+          if (!self->room->find_player(self->player_id)) {
+            player p;
+            p.id = data["id"].as_string().c_str();
+            p.name = data["name"].as_string().c_str();
+            p.score = data["score"].as_int64();
 
-          self->room->add_player(p);
+            self->room->add_player(p);
+          }
         }
 
         else if (type == "start") {
           self->room->handle_start(self);
         }
 
-        else {
-          self->broadcast(msg);
-        }
+        self->broadcast(msg);
 
         self->read();
       });

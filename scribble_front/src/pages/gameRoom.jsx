@@ -20,11 +20,15 @@ function GameRoom() {
   const wsRef = useRef(null);
 
 
-  const [word, setWord] = useState("SNAKE");
-  const [reveal, setRevel] = useState([1, 3]);
+  const [word, setWord] = useState("");
+  const [reveal, setRevel] = useState([]);
   const [score, setScore] = useState(0);
   const [isDrawing, setIsDrawing] = useState(false);
   const [messages, setMessages] = useState([]);
+  const [words, setWords] = useState([]);
+  const [timer, setTimer] = useState(0);
+  const timerRef = useRef(null);
+
 
   const [roomData, setRoomData] = useState({
     creator: "",
@@ -108,6 +112,48 @@ function GameRoom() {
       }
 
 
+      if (d.type === "turn") {
+        setPlayersData((prev) =>
+          prev.map((p) => ({
+            ...p,
+            isDrawing: p.id === d.player,
+          }))
+        );
+        if (uid == d.player) {
+          setIsDrawing(true)
+        }
+      }
+
+      if (d.type === "words") {
+        setWords(d.options);
+
+        if (timerRef.current) {
+          clearInterval(timerRef.current);
+        }
+
+        setTimer(20);
+
+        timerRef.current = setInterval(() => {
+          setTimer((prev) => {
+            if (prev <= 1) {
+              clearInterval(timerRef.current);
+              updateWord({ targer: { value: words[0] } });
+              return 0;
+            }
+            return prev - 1;
+          });
+        }, 1000);
+
+      }
+
+      if (d.type === "word_selected") {
+        setWord(d.data);
+        if (timerRef.current) {
+          clearInterval(timerRef.current);
+        }
+      }
+
+
     };
 
     ws.onclose = () => {
@@ -136,6 +182,16 @@ function GameRoom() {
     );
   };
 
+  const updateWord = (e) => {
+    setWords([]);
+    setWord(e.target.value);
+    wsRef.current.send(
+      JSON.stringify({
+        type: "word_selected",
+        data: e.target.value,
+      })
+    );
+  }
 
   return (
     <div className="h-screen overflow-hidden flex flex-col">
@@ -145,23 +201,68 @@ function GameRoom() {
           <LeaderBoard playersData={playersData} />
         </div>
         <div className="game_area">
-          <div className="word_conatiner">
-            <p>{
-              [...word].map((e, i) => (<span key={i}>
-                {reveal.filter(p => p == i).length > 0 ? e : "_"}
-              </span>))
-            }<sup>{word.length}</sup></p>
-          </div>
           {
-            roomData.started ?
-              <GameCanvas isDrawing={isDrawing} onDrawEnd={() => { }} /> :
-              uid == roomData.creator ?
-                <div className=" w-full h-full flex justify-center items-center">
-                  <input className="btn_primary text-4xl" type="button" value="Start" onClick={startGame} />
-                </div>
-                :
-                <p>Waiting for the creater to start the game</p>
+            word.length > 0 &&
+            <div className="word_conatiner">
+              <p>{
+                [...word].map((e, i) => (<span key={i}>
+                  {reveal.filter(p => p == i).length > 0 ? e : "_"}
+                </span>))
+              }<sup>{word.length}</sup></p>
+            </div>
           }
+
+          {
+            roomData.started ? (
+
+              isDrawing && words.length > 0 ? (
+
+                <div className="w-full h-full flex flex-col justify-center items-center">
+                  <p className="text-center">{timer}s</p>
+                  <p className="text-center">Please choose a word</p>
+
+                  <div className="flex justify-center gap-3">
+                    {words.map((e, i) => (
+                      <input
+                        key={i}
+                        type="button"
+                        className="btn_secondary"
+                        value={e}
+                        onClick={updateWord}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+              ) : word === "" ? (
+
+                <p>Waiting for player to choose a word</p>
+
+              ) : (
+
+                <GameCanvas isDrawing={isDrawing} onDrawEnd={() => { }} />
+
+              )
+
+            ) : uid === roomData.creator ? (
+
+              <div className="w-full h-full flex justify-center items-center">
+                <input
+                  className="btn_primary text-4xl"
+                  type="button"
+                  value="Start"
+                  onClick={startGame}
+                />
+              </div>
+
+            ) : (
+
+              <p>Waiting for the creator to start the game</p>
+
+            )
+          }
+
+
         </div>
         <div className="chat content_conatiner">
           <ChatBox messages={messages} sendMessage={sendChat} />

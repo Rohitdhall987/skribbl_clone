@@ -132,3 +132,11 @@ std::vector<std::string> Room::pick_random_words(int count) {
 
   return result;
 }
+
+bool Room::find_player(std::string id) {
+  for (auto p : players) {
+    if (p.id == id)
+      return true;
+  }
+  return false;
+}

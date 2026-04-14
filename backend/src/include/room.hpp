@@ -52,6 +52,7 @@ public:
 
   void handle_start(std::shared_ptr<Session> sender);
   void start_game();
+  bool find_player(std::string id);
 
   std::vector<std::string> pick_random_words(int count);
 
